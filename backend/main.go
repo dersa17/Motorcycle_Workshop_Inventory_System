@@ -27,7 +27,7 @@ func main () {
 
 	seeders.SeedAdmin(db)
 	r := gin.Default()
-    routes.SetupRoutes(r)
+    routes.SetupRoutes(r, db)
     r.Run(":8080")
 
 }

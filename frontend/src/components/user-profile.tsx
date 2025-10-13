@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { User, Settings, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -9,8 +12,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useMe, useLogout } from "@/hooks/use-auth";
 
 export function UserProfile() {
+  const router = useRouter();
+  const { data: user } = useMe(); // ambil data user
+  const logoutMutation = useLogout();
+  const handleLogout = () => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        router.push("/login");
+      },
+    });
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -26,9 +40,9 @@ export function UserProfile() {
       <DropdownMenuContent className="w-56 bg-popover" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Workshop Admin</p>
+            <p className="text-sm font-medium leading-none">{user?.data.username || "User"}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              admin@workshop.com
+              {user?.data.email || "email@example.com"}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -38,7 +52,10 @@ export function UserProfile() {
           <span>Account Settings</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
+        <DropdownMenuItem
+          className="cursor-pointer text-destructive focus:text-destructive"
+          onClick={handleLogout}
+        >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Logout</span>
         </DropdownMenuItem>

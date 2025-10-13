@@ -57,16 +57,16 @@ func (c *AuthController) Logout(ctx *gin.Context) {
 
 func (c *AuthController) Me(ctx *gin.Context) {
 	userAny, ok := ctx.Get("currentUser")
-		if !ok {
+	if !ok {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "user tidak ditemukan"})
 			return
-		}
+	}
 
 	currentUser, ok := userAny.(*dto.UserResponse)
-		if !ok {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "format user tidak valid"})
-			return
-		}
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "format user tidak valid"})
+		return
+	}
 
 	res, err := c.Service.Me(currentUser)
 	if err != nil {

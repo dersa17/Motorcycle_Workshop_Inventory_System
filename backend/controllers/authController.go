@@ -53,3 +53,31 @@ func (c *AuthController) Logout(ctx *gin.Context) {
 		"message": "logout berhasil",
 	})
 }
+
+
+func (c *AuthController) Me(ctx *gin.Context) {
+	userAny, ok := ctx.Get("currentUser")
+		if !ok {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "user tidak ditemukan"})
+			return
+		}
+
+	currentUser, ok := userAny.(*dto.UserResponse)
+		if !ok {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "format user tidak valid"})
+			return
+		}
+
+	res, err := c.Service.Me(currentUser)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "success",
+		"data":    res,
+	})
+}

@@ -4,13 +4,11 @@ import (
 	"errors"
 	"os"
 	"time"
-
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/dto"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/models"
-
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthService struct {
@@ -64,6 +62,22 @@ func (s *AuthService) Login(req *dto.LoginRequest) (*dto.LoginResponse, error) {
 	response := &dto.LoginResponse{
 		User:  userData,
 		Token: tokenString,
+	}
+
+	return response, nil
+}
+
+func (s *AuthService) Me(tokenUser *dto.UserResponse) (*dto.UserResponse, error) {
+	user := &models.User{}
+	err := s.DB.Where("id = ?", tokenUser.ID).First(user).Error
+	if err != nil {
+		return nil, errors.New("user tidak ditemukan")
+	}
+
+	response := &dto.UserResponse{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
 	}
 
 	return response, nil

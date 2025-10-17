@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { Home, Package, Wrench, FileText, Settings, BarChart3 } from "lucide-react"
+import { Home, Package, FolderTree, FileText, Settings, BarChart3 } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -16,7 +16,7 @@ import {
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   { title: "Inventory", url: "/inventory", icon: Package },
-  { title: "Services", url: "/services", icon: Wrench },
+  { title: "Kategori", url: "/kategori", icon: FolderTree }, 
   { title: "Reports", url: "/reports", icon: FileText },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Settings", url: "/settings", icon: Settings },

@@ -6,19 +6,19 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { data, isPending, error } = useMe();
+  const { data, isPending } = useMe();
   const router = useRouter();
   const toastShown = useRef(false); // supaya toast cuma muncul sekali
 
   useEffect(() => {
-    if (!isPending && (error || !data)) {
+    if (!isPending && !data) {
       if (!toastShown.current) {
         toast.error("Anda harus Sign In terlebih dahulu.");
         toastShown.current = true;
       }
       router.replace("/login");
     }
-  }, [data, error, isPending, router]);
+  }, [data, isPending, router]);
 
   if (isPending || !data )
     return (

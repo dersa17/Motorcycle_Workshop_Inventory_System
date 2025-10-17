@@ -30,7 +30,7 @@ export function UserProfile() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src="/placeholder.svg" alt="User" />
+            <AvatarImage alt="User" />
             <AvatarFallback className="bg-primary text-primary-foreground">
               <User className="h-5 w-5" />
             </AvatarFallback>

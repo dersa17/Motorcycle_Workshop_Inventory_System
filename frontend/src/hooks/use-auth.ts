@@ -5,7 +5,7 @@ export const useMe = () => {
   return useQuery({
     queryKey: ["me"],
     queryFn: authService.me,
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 60 * 30,
     refetchOnWindowFocus: false,
   });
 };

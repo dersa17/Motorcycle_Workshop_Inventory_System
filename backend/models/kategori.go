@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Kategori struct {
@@ -11,4 +12,5 @@ type Kategori struct {
 	Barang []Barang `gorm:"foreignKey:KategoriID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;"`
     CreatedAt time.Time `gorm:"not null;default:current_timestamp"`
     UpdatedAt time.Time `gorm:"not null;default:current_timestamp"`
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
 }

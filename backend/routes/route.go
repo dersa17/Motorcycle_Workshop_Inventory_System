@@ -11,6 +11,8 @@ import (
 func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	authService := services.NewAuthService(db)
 	authController := controllers.NewAuthController(authService)
+	categoryService := services.NewCategoryService(db)
+	categoryController := controllers.NewCategoryController(categoryService)
 
 	api := router.Group("/api")
 	{
@@ -24,5 +26,17 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 			auth.POST("/logout", middlewares.AuthMiddleware(), authController.Logout)
 			auth.POST("/login", authController.Login)
 		}
+		category  := api.Group("/categories") 
+		{
+			category.Use(middlewares.AuthMiddleware())
+			category.POST("", categoryController.Create)
+			category.GET("",categoryController.GetAll)
+			category.GET("/active",categoryController.GetActive)
+			category.PUT("/:id", categoryController.Update)
+			category.DELETE("/:id", categoryController.Delete)
+			category.PUT("restore/:id",categoryController.Restore)
+		}
+
+
 	}
 }

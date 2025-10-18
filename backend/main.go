@@ -1,9 +1,7 @@
 package main
 
 import (
-	// "os"
 	"os"
-
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/config"
 	// "github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/models"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/routes"

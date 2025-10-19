@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import { LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,8 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { categorySchema } from "@/schemas/category-schema";
 import { CardContent, Card } from "../ui/card";
+import { useCreateCategory } from "@/hooks/use-category";
+import { toast } from "sonner";
 
 export function CreateCategoryForm({ onCancel }: { onCancel: () => void }) {
+  const createMutation = useCreateCategory();
   const form = useForm<z.infer<typeof categorySchema>>({
     resolver: zodResolver(categorySchema),
     defaultValues: {
@@ -27,6 +30,12 @@ export function CreateCategoryForm({ onCancel }: { onCancel: () => void }) {
 
   const onSubmit = (data: z.infer<typeof categorySchema>) => {
     console.log(data);
+    createMutation.mutate(data, {
+      onSuccess: (res) => {
+        onCancel();
+        toast.success(res.message);
+      },
+    });
   };
 
   return (
@@ -48,8 +57,17 @@ export function CreateCategoryForm({ onCancel }: { onCancel: () => void }) {
               )}
             />
             <div className="flex gap-3">
+              {/* <pre>{JSON.stringify(form.formState.errors, null, 2)}</pre> */}
+
               <Button type="submit" className="cursor-pointer">
-                Buat
+                {createMutation.isPending ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <LoaderCircle className="w-4 h-4 animate-spin" />
+                    Membuat...
+                  </span>
+                ) : (
+                  "Buat"
+                )}
               </Button>
               <Button
                 type="button"

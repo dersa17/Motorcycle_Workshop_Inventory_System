@@ -12,24 +12,28 @@ export default function Layout({ children }: DashboardLayoutProps) {
   return (
     <AuthGuard>
       <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <main className="flex-1">
-          <header className="h-16 border-b border-border flex items-center justify-between px-4 bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-            <div className="flex items-center">
-              <SidebarTrigger />
-              
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <main className="flex-1">
+            <header className="h-16 border-b border-border flex items-center justify-between px-4 bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+              <div className="flex items-center">
+                <SidebarTrigger />
+
+              </div>
+              <div className="flex items-center gap-2">
+                <ModeToggle />
+                <UserProfile />
+              </div>
+            </header>
+            <div className="min-h-screen bg-background">
+              <div className="container mx-auto p-6 py-3 space-y-6">
+                {children}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <ModeToggle />
-              <UserProfile />
-            </div>
-          </header>
-          {children}
-        </main>
-      </div>
-    </SidebarProvider>
+          </main>
+        </div>
+      </SidebarProvider>
     </AuthGuard>
-    
+
   )
 }

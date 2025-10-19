@@ -16,13 +16,17 @@ import { CreateCategoryForm } from "@/components/category/create-category-form";
 import { UpdateCategoryForm } from "@/components/category/update-category-form";
 import { z } from "zod";
 import { categorySchema } from "@/schemas/category-schema";
+import { useDeleteCategory } from "@/hooks/use-category";
+import { toast } from "sonner";
+import { LoaderCircle } from "lucide-react";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState<"data" | "create" | "edit">("data");
   const [selectedCategory, setSelectedCategory] = useState<z.infer<typeof categorySchema> | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const deleteMutation = useDeleteCategory()  
 
-  
+
 
   const handleEdit = (category: z.infer<typeof categorySchema>) => {
     setSelectedCategory(category);
@@ -30,14 +34,12 @@ const Page = () => {
   }
 
   const handleDelete = (category: z.infer<typeof categorySchema>) => {
-    console.log("Delete category", category);
     setSelectedCategory(category);
     setDeleteDialogOpen(true);
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-6 py-3 space-y-3">
+    <>
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-gradient">
             {activeTab === "data"
@@ -86,17 +88,30 @@ const Page = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Batal</AlertDialogCancel>
-              <AlertDialogAction onClick={() => {
-                if (selectedCategory) {
+              <AlertDialogAction className="cursor-pointer" onClick={(e) => {
+                e.preventDefault()
+                if (selectedCategory?.id) {
                   console.log("Deleting category", selectedCategory);
-                  setDeleteDialogOpen(false);
-                }
-              }}>Hapus</AlertDialogAction>
+                  deleteMutation.mutate(selectedCategory.id, {
+                      onSuccess: (res) => {
+                        toast.success(res.message)
+                        setDeleteDialogOpen(false);
+                        setSelectedCategory(null)
+                        }
+                      })
+                  }
+              }}>
+                {deleteMutation.isPending ? (
+                  <span className="flex justify-center items-center gap-2">
+                     <LoaderCircle className="h-4 w-4 animate-spin"/>
+                     Menghapus...
+                  </span>
+                ) : ("Hapus")}
+                </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
-    </div>
+    </>
   );
 };
 

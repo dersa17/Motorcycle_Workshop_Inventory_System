@@ -41,8 +41,7 @@ const Page = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6 space-y-6">
+    <>
         {/* Header */}
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-gradient">Dashboard</h1>
@@ -115,8 +114,7 @@ const Page = () => {
             </CardContent>
           </Card>
         </div>
-      </div>
-    </div>
+    </>
   );
 };
 

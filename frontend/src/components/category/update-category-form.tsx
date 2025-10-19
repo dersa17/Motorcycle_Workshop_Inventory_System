@@ -16,8 +16,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { categorySchema } from "@/schemas/category-schema"
 import { CardContent, Card } from "../ui/card"
+import { useUpdateCategory } from "@/hooks/use-category"
+import { toast } from "sonner"
+import { LoaderCircle } from "lucide-react"
 
-export function UpdateCategoryForm({category, onSuccess, onCancel}: {category: z.infer<typeof categorySchema>, onSuccess: () => void, onCancel: () => void}) {
+
+export function UpdateCategoryForm({ category, onSuccess, onCancel }: { category: z.infer<typeof categorySchema>, onSuccess: () => void, onCancel: () => void }) {
   const form = useForm<z.infer<typeof categorySchema>>({
     resolver: zodResolver(categorySchema),
     defaultValues: {
@@ -25,36 +29,56 @@ export function UpdateCategoryForm({category, onSuccess, onCancel}: {category: z
     },
   })
 
+  const updateMutation = useUpdateCategory()
+
   const onSubmit = (data: z.infer<typeof categorySchema>) => {
-    console.log(data)
+    const payload = {
+      id: category.id,
+      ...data
+    }
+    updateMutation.mutate(payload, {
+      onSuccess: (res) => {
+        onSuccess()
+        toast.success(res.message)
+      }
+    })
+
   }
 
   return (
     <Card className="shadow-md">
-        <CardContent>
-                    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="nama"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nama</FormLabel>
-              <FormControl>
-                <Input placeholder="Masukkan nama kategori" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex gap-3">
-        <Button type="submit" className="cursor-pointer">Perbarui</Button>
-        <Button type="button" onClick={onCancel} variant={"secondary"} className="cursor-pointer">Batal</Button>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="nama"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nama</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Masukkan nama kategori" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex gap-3">
+              <Button type="submit" className="cursor-pointer">
+                {updateMutation.isPending ? (
+                  <span className="flex items-center justify-center gap-2">
+                     <LoaderCircle className="w-4 h-4 animate-spin"/>
+                      Memperbarui...
+                  </span>
+                ) : ("Perbarui")}
+                
+                </Button>
+              <Button type="button" onClick={onCancel} variant={"secondary"} className="cursor-pointer">Batal</Button>
 
-        </div>
-      </form>
-    </Form>
-        </CardContent>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
     </Card>
 
 

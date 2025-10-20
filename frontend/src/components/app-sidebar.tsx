@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { Home, Package, FolderTree, FileText, Settings, BarChart3 } from "lucide-react"
+import { Home, Package, FolderTree, FileText, Settings, Truck, CreditCard,DollarSign } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -12,18 +12,22 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { usePathname } from "next/navigation"
 
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Inventory", url: "/inventory", icon: Package },
+  { title: "Barang", url: "/inventory", icon: Package },
   { title: "Kategori", url: "/kategori", icon: FolderTree }, 
-  { title: "Reports", url: "/reports", icon: FileText },
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "Supplier", url: "/supplier", icon: Truck },
+    { title: "Pembelian", url: "/pembelian", icon: DollarSign },
+      { title: "Penjualan", url: "/penjualan", icon: DollarSign },
+  { title: "Laporan", url: "/reports", icon: FileText },
   { title: "Settings", url: "/settings", icon: Settings },
-]
+];
 
 export function AppSidebar() {
   const { open } = useSidebar()
+  const pathname = usePathname();
 
   return (
     <Sidebar collapsible="icon">
@@ -44,8 +48,8 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url} className="flex items-center gap-2">
+                  <SidebarMenuButton asChild className={ `${pathname === item.url ? "bg-primary text-white" : ""} hover:bg-primary hover:text-white `}>
+                    <Link href={item.url} className={`flex items-center gap-2`}>
                       <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
                     </Link>

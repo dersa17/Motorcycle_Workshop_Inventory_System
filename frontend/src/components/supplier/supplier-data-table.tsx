@@ -29,82 +29,83 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@radix-ui/react-tooltip";
-import { categorySchema } from "@/schemas/category-schema";
 import { z } from "zod";
-import { useActiveCategory } from "@/hooks/use-category";
+import { supplierSchema } from "@/schemas/supplier-schema";
 
-// const data: z.infer<typeof categorySchema>[] = [
-//   {
-//     id: "m5gr84i9",
-//     nama: "ban",
-//     deletedAt: "2023-10-09T09:00:00Z",
-//   },
-//   {
-//     id: "m5gr84i9",
-//     nama: "roda",
-//     deletedAt: null,
-//   },
-//   {
-//     id: "m5gr84i9",
-//     nama: "stang",
-//     deletedAt: "2023-10-10T10:00:00Z",
-//   },
-//   {
-//     id: "m5gr84i9",
-//     nama: "knalpot",
-//     deletedAt: null,
-//   },
-//   {
-//     id: "m5gr84i9",
-//     nama: "lampu",
-//     deletedAt: "2023-10-11T12:00:00Z",
-//   },
-//   {
-//     id: "m5gr84i9",
-//     nama: "spion",
-//     deletedAt: null,
-//   },
+const data: z.infer<typeof supplierSchema>[] = [
+  {
+    id: "S001",
+    nama: "PT. Sumber Makmur",
+    alamat: "Jl. Merdeka No. 10, Jakarta",
+    kontak: "+628123456789"
+  },
+  {
+    id: "S002",
+    nama: "CV. Tiga Putra",
+    alamat: "Jl. Sudirman No. 25, Bandung",
+    kontak: "081234567890"
+  },
+  {
+    id: "S003",
+    nama: "UD. Maju Jaya",
+    alamat: "Jl. Gatot Subroto No. 5, Surabaya",
+    kontak: "+62213456789"
+  },
+  {
+    id: "S004",
+    nama: "PT. Sejahtera Abadi",
+    alamat: "Jl. Diponegoro No. 50, Yogyakarta",
+    kontak: "081298765432"
+  },
+  {
+    id: "S005",
+    nama: "CV. Cahaya Mandiri",
+    alamat: "Jl. Ahmad Yani No. 100, Semarang",
+    kontak: "+628987654321"
+  },
+  {
+    id: "S006",
+    nama: "PT. Prima Karya",
+    alamat: "Jl. Teuku Umar No. 15, Denpasar",
+    kontak: "081345678901"
+  },
+  {
+    id: "S007",
+    nama: "UD. Indah Lestari",
+    alamat: "Jl. Gajah Mada No. 20, Medan",
+    kontak: "+62612345678"
+  },
+  {
+    id: "S008",
+    nama: "CV. Bersama Jaya",
+    alamat: "Jl. Pahlawan No. 30, Malang",
+    kontak: "081556677889"
+  },
+  {
+    id: "S009",
+    nama: "PT. Satria Abadi",
+    alamat: "Jl. Panglima Polim No. 12, Jakarta",
+    kontak: "+628223344556"
+  },
+  {
+    id: "S010",
+    nama: "CV. Karya Prima",
+    alamat: "Jl. Veteran No. 45, Bandung",
+    kontak: "081667788990"
+  },
+];
 
-//   {
-//     id: "m5gr84i9",
-//     nama: "oli",
-//     deletedAt: "2023-10-12T14:00:00Z",
-//   },
-
-//   {
-//     id: "m5gr84i9",
-//     nama: "busi",
-//     deletedAt: "2023-10-13T15:00:00Z",
-//   },
-//   {
-//     id: "m5gr84i9",
-//     nama: "busi",
-//     deletedAt: "2023-10-13T15:00:00Z",
-//   },
-//   {
-//     id: "m5gr84i9",
-//     nama: "busi",
-//     deletedAt: "2023-10-13T15:00:00Z",
-//   },
-//   {
-//     id: "m5gr84i9",
-//     nama: "busi",
-//     deletedAt: "2023-10-13T15:00:00Z",
-//   },
-// ];
-
-export function DataTableKategori({
+export function DataTableSupplier({
   onCreate,
   onEdit,
   onDelete,
 }: {
   onCreate: () => void;
-  onEdit: (category: z.infer<typeof categorySchema>) => void;
-  onDelete: (category: z.infer<typeof categorySchema>) => void;
+  onEdit: (category: z.infer<typeof supplierSchema>) => void;
+  onDelete: (category: z.infer<typeof supplierSchema>) => void;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const { data, isPending } = useActiveCategory()
-  const columns: ColumnDef<z.infer<typeof categorySchema>>[] = [
+  const columns: ColumnDef<z.infer<typeof supplierSchema>>[] = [
     {
       id: "no",
       header: "No",
@@ -114,6 +115,16 @@ export function DataTableKategori({
       accessorKey: "nama",
       header: "Nama",
       cell: ({ row }) => <div>{row.getValue("nama")}</div>,
+    },
+    {
+      accessorKey: "alamat",
+      header: "Alamat",
+      cell: ({ row }) => <div>{row.getValue("alamat")}</div>,
+    },
+    {
+      accessorKey: "kontak",
+      header: "Kontak",
+      cell: ({ row }) => <div>{row.getValue("kontak")}</div>,
     },
     {
       id: "aksi",
@@ -184,7 +195,7 @@ export function DataTableKategori({
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data: data?.categories ?? [],
+    data: data,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -215,7 +226,7 @@ export function DataTableKategori({
             className="max-w-sm"
           />
           <Button className="cursor-pointer" onClick={onCreate}>
-            Buat Kategori
+            Buat Supplier
             <Plus className="h-4 w-4" />
           </Button>
         </div>
@@ -262,7 +273,7 @@ export function DataTableKategori({
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    {isPending ? "Loading Data..." : "No results"}
+                        No results
                   </TableCell>
                 </TableRow>
               )}

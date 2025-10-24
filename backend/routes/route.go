@@ -13,6 +13,8 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	authController := controllers.NewAuthController(authService)
 	categoryService := services.NewCategoryService(db)
 	categoryController := controllers.NewCategoryController(categoryService)
+	supplierService := services.NewSupplierService(db)
+	supplierController := controllers.NewSupplierController(supplierService)
 
 	api := router.Group("/api")
 	{
@@ -35,6 +37,15 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 			category.PUT("/:id", categoryController.Update)
 			category.DELETE("/:id", categoryController.Delete)
 			category.PUT("restore/:id",categoryController.Restore)
+		}
+
+		supplier := api.Group("/suppliers")
+		{
+			supplier.Use(middlewares.AuthMiddleware())
+			supplier.POST("",supplierController.Create)
+			supplier.GET("",supplierController.GetAll)
+			supplier.PUT("/:id",supplierController.Update)
+			supplier.DELETE("/:id",supplierController.Delete)
 		}
 
 

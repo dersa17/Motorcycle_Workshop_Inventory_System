@@ -32,6 +32,7 @@ import {
 import { categorySchema } from "@/schemas/category-schema";
 import { z } from "zod";
 import { useActiveCategory } from "@/hooks/use-category";
+import { LoaderCircle } from "lucide-react";
 
 // const data: z.infer<typeof categorySchema>[] = [
 //   {
@@ -262,7 +263,10 @@ export function DataTableKategori({
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    {isPending ? "Loading Data..." : "No results"}
+                      {isPending ? (<span className="flex justify-center items-center gap-2">
+                     <LoaderCircle className="h-4 w-4 animate-spin"/>
+                     Loading Data...
+                  </span>) : ("No results")}  
                   </TableCell>
                 </TableRow>
               )}

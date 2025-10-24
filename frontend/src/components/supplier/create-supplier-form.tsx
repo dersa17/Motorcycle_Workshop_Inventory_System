@@ -16,11 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { supplierSchema } from "@/schemas/supplier-schema";
 import { CardContent, Card } from "../ui/card";
-import { useCreateCategory } from "@/hooks/use-category";
 import { toast } from "sonner";
+import { useCreateSupplier } from "@/hooks/use-supplier";
 
 export function CreateSupplierForm({ onCancel }: { onCancel: () => void }) {
-  const createMutation = useCreateCategory();
+  const createMutation = useCreateSupplier();
   const form = useForm<z.infer<typeof supplierSchema>>({
     resolver: zodResolver(supplierSchema),
     defaultValues: {
@@ -32,6 +32,12 @@ export function CreateSupplierForm({ onCancel }: { onCancel: () => void }) {
 
   const onSubmit = (data: z.infer<typeof supplierSchema>) => {
     console.log(data);
+    createMutation.mutate(data, {
+      onSuccess: (res) => {
+        onCancel()
+        toast.success(res.message)
+      }
+    })
   };
 
   return (

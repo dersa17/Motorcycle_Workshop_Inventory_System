@@ -18,12 +18,13 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
 import { supplierSchema } from "@/schemas/supplier-schema";
+import { useDeleteSupplier } from "@/hooks/use-supplier";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState<"data" | "create" | "edit">("data");
   const [selectedSupplier, setSelectedSupplier] = useState<z.infer<typeof supplierSchema> | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
+  const deleteMutation = useDeleteSupplier()  
 
 
 
@@ -90,11 +91,22 @@ const Page = () => {
               <AlertDialogAction className="cursor-pointer" onClick={(e) => {
                 e.preventDefault()
                 if (selectedSupplier?.id) {
-                  console.log("Deleting category", selectedSupplier);
-                  
+                  console.log("Deleting supplier", selectedSupplier);
+                   deleteMutation.mutate(selectedSupplier.id, {
+                      onSuccess: (res) => {
+                        toast.success(res.message)
+                        setDeleteDialogOpen(false);
+                        setSelectedSupplier(null)
+                        }
+                      })
                   }
               }}>
-                Hapus
+                 {deleteMutation.isPending ? (
+                  <span className="flex justify-center items-center gap-2">
+                     <LoaderCircle className="h-4 w-4 animate-spin"/>
+                     Menghapus...
+                  </span>
+                ) : ("Hapus")}
                 </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

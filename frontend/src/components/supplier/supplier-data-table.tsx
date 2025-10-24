@@ -31,69 +31,72 @@ import {
 } from "@radix-ui/react-tooltip";
 import { z } from "zod";
 import { supplierSchema } from "@/schemas/supplier-schema";
+import {useSupplier} from "@/hooks/use-supplier"
+import { LoaderCircle } from "lucide-react";
 
-const data: z.infer<typeof supplierSchema>[] = [
-  {
-    id: "S001",
-    nama: "PT. Sumber Makmur",
-    alamat: "Jl. Merdeka No. 10, Jakarta",
-    kontak: "+628123456789"
-  },
-  {
-    id: "S002",
-    nama: "CV. Tiga Putra",
-    alamat: "Jl. Sudirman No. 25, Bandung",
-    kontak: "081234567890"
-  },
-  {
-    id: "S003",
-    nama: "UD. Maju Jaya",
-    alamat: "Jl. Gatot Subroto No. 5, Surabaya",
-    kontak: "+62213456789"
-  },
-  {
-    id: "S004",
-    nama: "PT. Sejahtera Abadi",
-    alamat: "Jl. Diponegoro No. 50, Yogyakarta",
-    kontak: "081298765432"
-  },
-  {
-    id: "S005",
-    nama: "CV. Cahaya Mandiri",
-    alamat: "Jl. Ahmad Yani No. 100, Semarang",
-    kontak: "+628987654321"
-  },
-  {
-    id: "S006",
-    nama: "PT. Prima Karya",
-    alamat: "Jl. Teuku Umar No. 15, Denpasar",
-    kontak: "081345678901"
-  },
-  {
-    id: "S007",
-    nama: "UD. Indah Lestari",
-    alamat: "Jl. Gajah Mada No. 20, Medan",
-    kontak: "+62612345678"
-  },
-  {
-    id: "S008",
-    nama: "CV. Bersama Jaya",
-    alamat: "Jl. Pahlawan No. 30, Malang",
-    kontak: "081556677889"
-  },
-  {
-    id: "S009",
-    nama: "PT. Satria Abadi",
-    alamat: "Jl. Panglima Polim No. 12, Jakarta",
-    kontak: "+628223344556"
-  },
-  {
-    id: "S010",
-    nama: "CV. Karya Prima",
-    alamat: "Jl. Veteran No. 45, Bandung",
-    kontak: "081667788990"
-  },
-];
+
+// const data: z.infer<typeof supplierSchema>[] = [
+//   {
+//     id: "S001",
+//     nama: "PT. Sumber Makmur",
+//     alamat: "Jl. Merdeka No. 10, Jakarta",
+//     kontak: "+628123456789"
+//   },
+//   {
+//     id: "S002",
+//     nama: "CV. Tiga Putra",
+//     alamat: "Jl. Sudirman No. 25, Bandung",
+//     kontak: "081234567890"
+//   },
+//   {
+//     id: "S003",
+//     nama: "UD. Maju Jaya",
+//     alamat: "Jl. Gatot Subroto No. 5, Surabaya",
+//     kontak: "+62213456789"
+//   },
+//   {
+//     id: "S004",
+//     nama: "PT. Sejahtera Abadi",
+//     alamat: "Jl. Diponegoro No. 50, Yogyakarta",
+//     kontak: "081298765432"
+//   },
+//   {
+//     id: "S005",
+//     nama: "CV. Cahaya Mandiri",
+//     alamat: "Jl. Ahmad Yani No. 100, Semarang",
+//     kontak: "+628987654321"
+//   },
+//   {
+//     id: "S006",
+//     nama: "PT. Prima Karya",
+//     alamat: "Jl. Teuku Umar No. 15, Denpasar",
+//     kontak: "081345678901"
+//   },
+//   {
+//     id: "S007",
+//     nama: "UD. Indah Lestari",
+//     alamat: "Jl. Gajah Mada No. 20, Medan",
+//     kontak: "+62612345678"
+//   },
+//   {
+//     id: "S008",
+//     nama: "CV. Bersama Jaya",
+//     alamat: "Jl. Pahlawan No. 30, Malang",
+//     kontak: "081556677889"
+//   },
+//   {
+//     id: "S009",
+//     nama: "PT. Satria Abadi",
+//     alamat: "Jl. Panglima Polim No. 12, Jakarta",
+//     kontak: "+628223344556"
+//   },
+//   {
+//     id: "S010",
+//     nama: "CV. Karya Prima",
+//     alamat: "Jl. Veteran No. 45, Bandung",
+//     kontak: "081667788990"
+//   },
+// ];
 
 export function DataTableSupplier({
   onCreate,
@@ -101,9 +104,10 @@ export function DataTableSupplier({
   onDelete,
 }: {
   onCreate: () => void;
-  onEdit: (category: z.infer<typeof supplierSchema>) => void;
-  onDelete: (category: z.infer<typeof supplierSchema>) => void;
+  onEdit: (supplier: z.infer<typeof supplierSchema>) => void;
+  onDelete: (supplier: z.infer<typeof supplierSchema>) => void;
 }) {
+  const {data, isPending} = useSupplier()
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const columns: ColumnDef<z.infer<typeof supplierSchema>>[] = [
     {
@@ -195,7 +199,7 @@ export function DataTableSupplier({
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data: data,
+    data: data?.suppliers ?? [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -273,7 +277,10 @@ export function DataTableSupplier({
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                        No results
+                    {isPending ? (<span className="flex justify-center items-center gap-2">
+                     <LoaderCircle className="h-4 w-4 animate-spin"/>
+                     Loading Data...
+                  </span>) : ("No results")}    
                   </TableCell>
                 </TableRow>
               )}

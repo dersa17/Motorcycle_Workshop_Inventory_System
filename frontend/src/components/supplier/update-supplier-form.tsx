@@ -16,9 +16,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { supplierSchema } from "@/schemas/supplier-schema"
 import { CardContent, Card } from "../ui/card"
-import { useUpdateCategory } from "@/hooks/use-category"
 import { toast } from "sonner"
 import { LoaderCircle } from "lucide-react"
+import { useUpdateSupplier } from "@/hooks/use-supplier"
 
 
 export function UpdateSupplierForm({ supplier, onSuccess, onCancel }: { supplier: z.infer<typeof supplierSchema>, onSuccess: () => void, onCancel: () => void }) {
@@ -31,15 +31,20 @@ export function UpdateSupplierForm({ supplier, onSuccess, onCancel }: { supplier
     },
   })
 
-  const updateMutation = useUpdateCategory()
+  const updateMutation = useUpdateSupplier()
 
   const onSubmit = (data: z.infer<typeof supplierSchema>) => {
     const payload = {
       id: supplier.id,
       ...data
     }
-   console.log(payload)
-
+    console.log(payload)
+    updateMutation.mutate(payload, {
+      onSuccess: (res) => {
+        onSuccess()
+        toast.success(res.message)
+      }
+    })
   }
 
   return (

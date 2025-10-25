@@ -37,6 +37,7 @@ func main () {
 
 
     routes.SetupRoutes(r, db)
+	r.Static("/uploads", "./uploads")
     r.Run(":8080")
 
 }

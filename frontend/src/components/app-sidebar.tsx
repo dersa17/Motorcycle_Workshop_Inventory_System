@@ -16,7 +16,7 @@ import { usePathname } from "next/navigation"
 
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Barang", url: "/inventory", icon: Package },
+  { title: "Barang", url: "/item", icon: Package },
   { title: "Kategori", url: "/kategori", icon: FolderTree }, 
   { title: "Supplier", url: "/supplier", icon: Truck },
     { title: "Pembelian", url: "/pembelian", icon: DollarSign },

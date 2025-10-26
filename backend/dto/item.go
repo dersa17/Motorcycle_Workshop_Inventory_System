@@ -9,8 +9,8 @@ type ItemRequest struct {
 	KategoriID string `form:"kategoriID" binding:"required,uuid"`
 	Nama string `form:"nama" binding:"required"`
 	Harga float64 `form:"harga" binding:"required,gt=0"`
-	Stok int `form:"stok" binding:"required,gte=0"`
-	StokMinimum int `form:"stokMinimum" binding:"required,gte=0"`
+	Stok int `form:"stok" binding:"gte=0"`
+	StokMinimum int `form:"stokMinimum" binding:"gte=0"`
 	Gambar *multipart.FileHeader `form:"gambar"`
 }
 

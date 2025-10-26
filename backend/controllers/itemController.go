@@ -56,7 +56,7 @@ func (c *ItemController) Update(ctx *gin.Context) {
 	req := &dto.ItemRequest{}
 
 	if err := ctx.ShouldBind(req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "format data tidak valid", "details": err.Error()})
 		return
 	}
 

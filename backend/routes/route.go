@@ -17,6 +17,8 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	supplierController := controllers.NewSupplierController(supplierService)
 	itemService := services.NewItemService(db)
 	itemController := controllers.NewItemController(itemService)
+	transactionService := services.NewTransactionService(db)
+	transactionController := controllers.NewTransactionController(transactionService)	
 
 	api := router.Group("/api")
 	{
@@ -57,6 +59,14 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 			item.GET("",itemController.GetAll)
 			item.PUT("/:id",itemController.Update)
 			item.DELETE("/:id",itemController.Delete)
+		}
+
+		transaction := api.Group("/transactions")
+		{
+			transaction.Use(middlewares.AuthMiddleware())
+			transaction.POST("", transactionController.Create)
+			transaction.GET("", transactionController.GetAll)
+			transaction.PUT("/:id", transactionController.Update)
 		}
 
 

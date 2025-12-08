@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { Home, Package, FolderTree, FileText, Settings, Truck, CreditCard,DollarSign } from "lucide-react"
+import { Home, Package, FolderTree, FileText, Settings, Truck,DollarSign, History } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -16,11 +16,12 @@ import { usePathname } from "next/navigation"
 
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Barang", url: "/item", icon: Package },
+  { title: "Barang", url: "/barang", icon: Package },
   { title: "Kategori", url: "/kategori", icon: FolderTree }, 
   { title: "Supplier", url: "/supplier", icon: Truck },
-    { title: "Pembelian", url: "/pembelian", icon: DollarSign },
-      { title: "Penjualan", url: "/penjualan", icon: DollarSign },
+  { title: "Pembelian", url: "/pembelian", icon: DollarSign },
+  { title: "Penjualan", url: "/penjualan", icon: DollarSign },
+  {title: "Riwayat Transaksi", url: "/riwayat-transaksi", icon: History},
   { title: "Laporan", url: "/reports", icon: FileText },
   { title: "Settings", url: "/settings", icon: Settings },
 ];

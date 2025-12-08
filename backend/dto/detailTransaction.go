@@ -19,7 +19,7 @@ type DetailTransactionUpdateRequest struct {
 
 type DetailTransactionResponse struct {
 	ID          uuid.UUID `json:"id"`
-	NamaBarang  string    `json:"namaBarang"`
+	Barang  	ItemResponse    `json:"barang"`
 	Jumlah      int       `json:"jumlah"`
 	HargaSatuan float64   `json:"hargaSatuan"`
 	Subtotal    float64   `json:"subtotal"`

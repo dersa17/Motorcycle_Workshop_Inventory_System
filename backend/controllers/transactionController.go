@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"net/http"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/dto"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/services"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type TransactionController struct {
@@ -16,10 +16,21 @@ func NewTransactionController(transactionService *services.TransactionService) *
 }
 
 func (c *TransactionController) Create(ctx *gin.Context) {
-	req := &dto.TransactionRequest{}	
+	req := &dto.TransactionRequest{}
 	if err := ctx.ShouldBindJSON(req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "format data tidak valid", "details": err.Error()})
 		return
+	}
+
+	// Jika jenis = pembelian, supplier wajib ada
+	if req.Jenis == "pembelian" {
+		if req.SupplierID == nil || *req.SupplierID == "" {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": "supplier wajib diisi untuk pembelian",
+			})
+			return
+		}
+
 	}
 
 	res, err := c.TransactionService.Create(req)
@@ -43,7 +54,6 @@ func (c *TransactionController) GetAll(ctx *gin.Context) {
 		"data": res,
 	})
 }
-
 
 func (c *TransactionController) Update(ctx *gin.Context) {
 	id := ctx.Param("id")

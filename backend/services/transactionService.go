@@ -2,12 +2,13 @@ package services
 
 import (
 	"errors"
-	"strconv"
-	"time"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/dto"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/helpers"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/models"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"strconv"
+	"time"
 )
 
 type TransactionService struct {
@@ -52,9 +53,18 @@ func (s *TransactionService) Create(req *dto.TransactionRequest) (*dto.Transacti
 		tgl = parsedTime
 	}
 
+	var supplierUUID *uuid.UUID
+
+	if req.Jenis == "pembelian" {
+		parsed, _ := uuid.Parse(*req.SupplierID)
+		supplierUUID = &parsed
+	} else {
+		supplierUUID = nil
+	}
+
 	// Buat struct transaksi
 	transaction := &models.Transaksi{
-		SupplierID:      req.SupplierID,
+		SupplierID:      supplierUUID,
 		Jenis:           req.Jenis,
 		Tanggal:         tgl,
 		Total:           calculateTotal(detailItems),
@@ -120,8 +130,11 @@ func (s *TransactionService) Create(req *dto.TransactionRequest) (*dto.Transacti
 
 	// Buat response DTO
 	response := &dto.TransactionResponse{
-		ID:              created.ID,
-		NamaSupplier:    created.Supplier.Nama,
+		ID: created.ID,
+		Supplier: dto.SupplierResponse{
+			ID:   transaction.Supplier.ID,
+			Nama: transaction.Supplier.Nama,
+		},
 		Jenis:           created.Jenis,
 		Tanggal:         created.Tanggal.Format("2006-01-02 15:04:05"),
 		Total:           created.Total,
@@ -130,8 +143,12 @@ func (s *TransactionService) Create(req *dto.TransactionRequest) (*dto.Transacti
 
 	for _, detail := range created.DetailTransaksi {
 		response.DetailTransaksi = append(response.DetailTransaksi, dto.DetailTransactionResponse{
-			ID:          detail.ID,
-			NamaBarang:  detail.Barang.Nama,
+			ID: detail.ID,
+			Barang: dto.ItemResponse{
+				ID:   detail.Barang.ID,
+				Nama: detail.Barang.Nama,
+				Stok: detail.Barang.Stok,
+			},
 			Jumlah:      detail.Jumlah,
 			HargaSatuan: detail.HargaSatuan,
 			Subtotal:    detail.Subtotal,
@@ -140,7 +157,6 @@ func (s *TransactionService) Create(req *dto.TransactionRequest) (*dto.Transacti
 
 	return response, nil
 }
-
 
 func (s *TransactionService) GetAll() (*dto.TransactionListResponse, error) {
 	var transactions []models.Transaksi
@@ -155,16 +171,23 @@ func (s *TransactionService) GetAll() (*dto.TransactionListResponse, error) {
 		detailResponses := []dto.DetailTransactionResponse{}
 		for _, detail := range transaction.DetailTransaksi {
 			detailResponses = append(detailResponses, dto.DetailTransactionResponse{
-				ID:          detail.ID,
-				NamaBarang:  detail.Barang.Nama,
+				ID: detail.ID,
+				Barang: dto.ItemResponse{
+					ID:   detail.Barang.ID,
+					Nama: detail.Barang.Nama,
+					Stok: detail.Barang.Stok,
+				},
 				Jumlah:      detail.Jumlah,
 				HargaSatuan: detail.HargaSatuan,
 				Subtotal:    detail.Subtotal,
 			})
 		}
 		responses = append(responses, dto.TransactionResponse{
-			ID:              transaction.ID,
-			NamaSupplier:    transaction.Supplier.Nama,
+			ID: transaction.ID,
+			Supplier: dto.SupplierResponse{
+				ID:   transaction.Supplier.ID,
+				Nama: transaction.Supplier.Nama,
+			},
 			Jenis:           transaction.Jenis,
 			Tanggal:         transaction.Tanggal.Format("2006-01-02 15:04:05"),
 			Total:           transaction.Total,
@@ -278,10 +301,19 @@ func (s *TransactionService) Update(id string, req *dto.TransactionUpdateRequest
 			tgl = parsedTime
 		}
 
+		var supplierUUID *uuid.UUID
+
+		if req.Jenis == "pembelian" {
+			parsed, _ := uuid.Parse(*req.SupplierID)
+			supplierUUID = &parsed
+		} else {
+			supplierUUID = nil
+		}
+
 		// ============================
 		// 6. UPDATE TRANSAKSI UTAMA
 		// ============================
-		existing.SupplierID = req.SupplierID
+		existing.SupplierID = supplierUUID
 		existing.Jenis = req.Jenis
 		existing.Tanggal = tgl
 		existing.DetailTransaksi = newDetails
@@ -310,8 +342,11 @@ func (s *TransactionService) Update(id string, req *dto.TransactionUpdateRequest
 	// 7. Build response DTO
 	// ============================
 	response := &dto.TransactionResponse{
-		ID:              existing.ID,
-		NamaSupplier:    existing.Supplier.Nama,
+		ID: existing.ID,
+		Supplier: dto.SupplierResponse{
+			ID:   existing.Supplier.ID,
+			Nama: existing.Supplier.Nama,
+		},
 		Jenis:           existing.Jenis,
 		Tanggal:         existing.Tanggal.Format("2006-01-02 15:04:05"),
 		Total:           existing.Total,
@@ -320,8 +355,12 @@ func (s *TransactionService) Update(id string, req *dto.TransactionUpdateRequest
 
 	for _, detail := range existing.DetailTransaksi {
 		response.DetailTransaksi = append(response.DetailTransaksi, dto.DetailTransactionResponse{
-			ID:          detail.ID,
-			NamaBarang:  detail.Barang.Nama,
+			ID: detail.ID,
+			Barang: dto.ItemResponse{
+				ID:   detail.Barang.ID,
+				Nama: detail.Barang.Nama,
+				Stok: detail.Barang.Stok,
+			},
 			Jumlah:      detail.Jumlah,
 			HargaSatuan: detail.HargaSatuan,
 			Subtotal:    detail.Subtotal,

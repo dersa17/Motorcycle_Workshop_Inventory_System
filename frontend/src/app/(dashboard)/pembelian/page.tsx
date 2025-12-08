@@ -61,6 +61,7 @@ const Page = () => {
     z.infer<typeof detailTransactionRequestSchema>[]
   >([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const [tempPrices, setTempPrices] = useState<{ [key: string]: number }>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const filteredItems =
@@ -73,6 +74,13 @@ const Page = () => {
     setQuantities({ ...quantities, [itemId]: quantity });
   };
 
+const handlePriceChange = (itemId: string, value: string) => {
+  const price = parseFloat(value) || 0;
+  setTempPrices({ ...tempPrices, [itemId]: price });
+
+};
+
+
   const addToPurchase = (item: z.infer<typeof itemResponseSchema>) => {
     if (!selectedSupplier) {
       toast.error("Pilih supplier terlebih dahulu");
@@ -80,6 +88,7 @@ const Page = () => {
     }
 
     const quantity = quantities[item.id] || 1;
+    const price = tempPrices[item.id] ?? item.harga;
 
     if (quantity <= 0) {
       toast.error("Kuantitas harus lebih dari 0");
@@ -97,8 +106,9 @@ const Page = () => {
             ? {
                 ...purchaseItem,
                 jumlah: purchaseItem.jumlah + quantity,
+                hargaSatuan: price,
                 subtotal:
-                  (purchaseItem.jumlah + quantity) * purchaseItem.hargaSatuan,
+                  (purchaseItem.jumlah + quantity) * price,
               }
             : purchaseItem
         )
@@ -109,7 +119,7 @@ const Page = () => {
         {
           barangID: item.id,
           jumlah: quantity,
-          hargaSatuan: item.harga,
+          hargaSatuan: price,
         },
       ]);
     }
@@ -296,7 +306,18 @@ const Page = () => {
                             </Tooltip>
                           </TooltipProvider>
                         </TableCell>
-                        <TableCell>{formatRupiah(item.harga)}</TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            min="0"
+                            value={tempPrices[item.id] || 0}
+                            onChange={(e) =>
+                              handlePriceChange(item.id, e.target.value)
+                            }
+                            className="w-24"
+                          />
+                        </TableCell>
+
                         <TableCell>
                           <Input
                             type="number"

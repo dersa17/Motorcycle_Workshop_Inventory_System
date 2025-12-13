@@ -9,7 +9,7 @@ export const itemRequestSchema = z.object({
     kategoriID: z.string().nonempty("Kategori wajib dipilih"),
     nama: z.string().min(1, "Nama wajib diisi"),
     harga: z.number().gt(0, "Harga harus lebih besar dari 0"),
-    stok: z.number().gte(0, "Stok harus lebih besar atau sama dengan 0"),
+    stokInitial: z.number().gte(0, "StokInitial harus lebih besar atau sama dengan 0").optional(),
     stokMinimum: z.number().gte(0, "StokMinimum harus lebih besar atau sama dengan 0"),
     gambar:
         z.instanceof(File).refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
@@ -29,6 +29,7 @@ export const itemResponseSchema = z.object({
     nama: z.string().min(1, "Nama wajib diisi"),
     harga: z.number().gt(0, "Harga harus lebih besar dari 0"),
     stok: z.number().gte(0, "Stok harus lebih besar atau sama dengan 0"),
+    stokInitial: z.number().gte(0, "StokInitial harus lebih besar atau sama dengan 0"),
     stokMinimum: z.number().gte(0, "StokMinimum harus lebih besar atau sama dengan 0"),
     gambar: z.string().optional()
 });

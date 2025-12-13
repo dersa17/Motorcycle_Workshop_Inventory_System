@@ -88,6 +88,11 @@ export function DataTableItem({
             cell: ({ row }) => <div>{row.getValue("stok")}</div>,
         },
         {
+            accessorKey: "stokInitial",
+            header: "Stok Awal",
+            cell: ({ row }) => <div>{row.getValue("stokInitial")}</div>,
+        },
+        {
             accessorKey: "stokMinimum",
             header: "Stok Minimum",
             cell: ({ row }) => <div>{row.getValue("stokMinimum")}</div>,

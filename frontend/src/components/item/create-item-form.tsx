@@ -37,7 +37,7 @@ export function CreateItemForm({ onCancel }: { onCancel: () => void }) {
       nama: "",
       kategoriID: "",
       harga: 0,
-      stok: 0,
+      stokInitial: 0,
       stokMinimum: 0,
       gambar: undefined,
     },
@@ -49,7 +49,7 @@ export function CreateItemForm({ onCancel }: { onCancel: () => void }) {
     formData.append("nama", data.nama);
     formData.append("kategoriID", data.kategoriID);
     formData.append("harga", data.harga.toString());
-    formData.append("stok", data.stok.toString());
+    formData.append("stokInitial", data.stokInitial!.toString());
     formData.append("stokMinimum", data.stokMinimum.toString());
     if (data.gambar) formData.append("gambar", data.gambar);
     createMutation.mutate(formData, {
@@ -132,14 +132,14 @@ export function CreateItemForm({ onCancel }: { onCancel: () => void }) {
             />
             <FormField
               control={form.control}
-              name="stok"
+              name="stokInitial"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Stok</FormLabel>
+                  <FormLabel>Stok Awal</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="Masukkan Stok"
+                      placeholder="Masukkan Stok Awal"
                       {...field}
                       onChange={(e) => field.onChange(e.target.valueAsNumber)}
                     />

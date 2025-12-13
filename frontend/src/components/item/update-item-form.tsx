@@ -35,7 +35,6 @@ export function UpdateItemForm({ item, onSuccess, onCancel }: { item: z.infer<ty
       nama: item.nama,
       kategoriID: item.kategori.id,
       harga: item.harga,
-      stok: item.stok,
       stokMinimum: item.stokMinimum,
       gambar: undefined,
     },
@@ -49,7 +48,6 @@ export function UpdateItemForm({ item, onSuccess, onCancel }: { item: z.infer<ty
     formData.append("nama", data.nama);
     formData.append("kategoriID", data.kategoriID);
     formData.append("harga", data.harga.toString());
-    formData.append("stok", data.stok.toString());
     formData.append("stokMinimum", data.stokMinimum.toString());
     if (data.gambar) formData.append("gambar", data.gambar);
     
@@ -119,19 +117,6 @@ export function UpdateItemForm({ item, onSuccess, onCancel }: { item: z.infer<ty
                         )}
                       </SelectContent>
                     </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="stok"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Stok</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="Masukkan Stok" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

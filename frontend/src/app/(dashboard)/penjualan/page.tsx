@@ -39,7 +39,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { detailTransactionSchema } from "@/schemas/transaction-schema";
+import { detailTransactionRequestSchema } from "@/schemas/transaction-schema";
 import { useCreateTransaction } from "@/hooks/use-transactions";
 
 const Page = () => {
@@ -47,7 +47,7 @@ const Page = () => {
   const { data: dataItem, isPending: isItemPending } = useItem();
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [purchaseList, setPurchaseList] = useState<
-    z.infer<typeof detailTransactionSchema>[]
+    z.infer<typeof detailTransactionRequestSchema>[]
   >([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -71,9 +71,9 @@ const Page = () => {
     }
 
     const existingItem = purchaseList.find(
-      (purchaseItem) => purchaseItem.barangId === item.id
+      (purchaseItem) => purchaseItem.barangID === item.id
     );
-    
+
     if (!existingItem && quantity > item.stok) {
       toast.error(
         `Stok tidak mencukupi. Stok tersedia: ${item.stok}, Jumlah yang diminta: ${quantity}`
@@ -93,7 +93,7 @@ const Page = () => {
     if (existingItem) {
       setPurchaseList(
         purchaseList.map((purchaseItem) =>
-          purchaseItem.barangId === item.id
+          purchaseItem.barangID === item.id
             ? {
                 ...purchaseItem,
                 jumlah: purchaseItem.jumlah + quantity,
@@ -107,7 +107,7 @@ const Page = () => {
       setPurchaseList([
         ...purchaseList,
         {
-          barangId: item.id,
+          barangID: item.id,
           jumlah: quantity,
           hargaSatuan: item.harga,
         },
@@ -120,7 +120,7 @@ const Page = () => {
   };
 
   const removeFromPurchase = (itemId: string) => {
-    setPurchaseList(purchaseList.filter((item) => item.barangId !== itemId));
+    setPurchaseList(purchaseList.filter((item) => item.barangID !== itemId));
   };
 
   const calculateTotal = () => {
@@ -192,17 +192,72 @@ const Page = () => {
                   className="w-[240px] justify-start text-left font-normal"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  {date ? (
+                    format(date, "PPP HH:mm")
+                  ) : (
+                    <span>Pilih tanggal & jam</span>
+                  )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-3" align="start">
+                {/* Calendar untuk memilih tanggal */}
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={setDate}
+                  onSelect={(selectedDate) => {
+                    if (!selectedDate) return;
+                    if (!date) {
+                      // Jika sebelumnya belum ada jam, set jam ke 00:00
+                      setDate(
+                        new Date(
+                          selectedDate.getFullYear(),
+                          selectedDate.getMonth(),
+                          selectedDate.getDate(),
+                          0,
+                          0
+                        )
+                      );
+                    } else {
+                      // Preserve jam sebelumnya
+                      setDate(
+                        new Date(
+                          selectedDate.getFullYear(),
+                          selectedDate.getMonth(),
+                          selectedDate.getDate(),
+                          date.getHours(),
+                          date.getMinutes()
+                        )
+                      );
+                    }
+                  }}
                   initialFocus
                   className="p-3 pointer-events-auto"
                 />
+
+                {/* Input untuk memilih jam */}
+                <div className="mt-2 flex items-center gap-2">
+                  <label className="text-sm">Jam:</label>
+                  <input
+                    type="time"
+                    value={date ? format(date, "HH:mm") : ""}
+                    onChange={(e) => {
+                      if (!date) return;
+                      const [hours, minutes] = e.target.value
+                        .split(":")
+                        .map(Number);
+                      setDate(
+                        new Date(
+                          date.getFullYear(),
+                          date.getMonth(),
+                          date.getDate(),
+                          hours,
+                          minutes
+                        )
+                      );
+                    }}
+                    className="border rounded p-1"
+                  />
+                </div>
               </PopoverContent>
             </Popover>
           </div>
@@ -319,10 +374,10 @@ const Page = () => {
                 </TableHeader>
                 <TableBody>
                   {purchaseList.map((p) => {
-                    const item = findItem(p.barangId);
+                    const item = findItem(p.barangID);
 
                     return (
-                      <TableRow key={p.barangId}>
+                      <TableRow key={p.barangID}>
                         <TableCell>
                           {item && (
                             <Image
@@ -356,7 +411,7 @@ const Page = () => {
                           <Button
                             size="sm"
                             variant="destructive"
-                            onClick={() => removeFromPurchase(p.barangId)}
+                            onClick={() => removeFromPurchase(p.barangID)}
                           >
                             <Minus className="h-4 w-4" />
                           </Button>

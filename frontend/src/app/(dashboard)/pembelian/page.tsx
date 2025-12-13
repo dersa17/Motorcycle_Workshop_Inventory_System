@@ -227,26 +227,81 @@ const handlePriceChange = (itemId: string, value: string) => {
                 <label className="text-sm font-medium">
                   Tanggal (Opsional):
                 </label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-[240px] justify-start text-left font-normal"
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={setDate}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
+                  <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-[240px] justify-start text-left font-normal"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? (
+                    format(date, "PPP HH:mm")
+                  ) : (
+                    <span>Pilih tanggal & jam</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-3" align="start">
+                {/* Calendar untuk memilih tanggal */}
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(selectedDate) => {
+                    if (!selectedDate) return;
+                    if (!date) {
+                      // Jika sebelumnya belum ada jam, set jam ke 00:00
+                      setDate(
+                        new Date(
+                          selectedDate.getFullYear(),
+                          selectedDate.getMonth(),
+                          selectedDate.getDate(),
+                          0,
+                          0
+                        )
+                      );
+                    } else {
+                      // Preserve jam sebelumnya
+                      setDate(
+                        new Date(
+                          selectedDate.getFullYear(),
+                          selectedDate.getMonth(),
+                          selectedDate.getDate(),
+                          date.getHours(),
+                          date.getMinutes()
+                        )
+                      );
+                    }
+                  }}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+
+                {/* Input untuk memilih jam */}
+                <div className="mt-2 flex items-center gap-2">
+                  <label className="text-sm">Jam:</label>
+                  <input
+                    type="time"
+                    value={date ? format(date, "HH:mm") : ""}
+                    onChange={(e) => {
+                      if (!date) return;
+                      const [hours, minutes] = e.target.value
+                        .split(":")
+                        .map(Number);
+                      setDate(
+                        new Date(
+                          date.getFullYear(),
+                          date.getMonth(),
+                          date.getDate(),
+                          hours,
+                          minutes
+                        )
+                      );
+                    }}
+                    className="border rounded p-1"
+                  />
+                </div>
+              </PopoverContent>
+            </Popover>
               </div>
             </>
           )}

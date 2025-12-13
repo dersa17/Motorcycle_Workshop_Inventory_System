@@ -29,7 +29,8 @@ func (s *ItemService) Create(req *dto.ItemRequest, file *multipart.FileHeader) (
 		KategoriID:  kategoriUUID,
 		Nama:        req.Nama,
 		Harga:       req.Harga,
-		Stok:        req.Stok,
+		Stok:        req.StokInitial,
+		StokInitial: req.StokInitial,
 		StokMinimum: req.StokMinimum,
 	}
 
@@ -77,6 +78,7 @@ func (s *ItemService) Create(req *dto.ItemRequest, file *multipart.FileHeader) (
 			Nama: item.Kategori.Nama,
 		},
 		Stok:        item.Stok,
+		StokInitial: item.StokInitial,
 		StokMinimum: item.StokMinimum,
 		Gambar:      item.Gambar,
 	}
@@ -102,6 +104,7 @@ func (s *ItemService) GetAll() (*dto.ItemListResponse, error) {
 				Nama: item.Kategori.Nama,
 			},
 			Stok:        item.Stok,
+			StokInitial: item.StokInitial,
 			StokMinimum: item.StokMinimum,
 			Gambar:      item.Gambar,
 		})
@@ -114,7 +117,7 @@ func (s *ItemService) GetAll() (*dto.ItemListResponse, error) {
 	return response, nil
 }
 
-func (s *ItemService) Update(id string, req *dto.ItemRequest, file *multipart.FileHeader) (*dto.ItemResponse, error) {
+func (s *ItemService) Update(id string, req *dto.ItemUpdateRequest, file *multipart.FileHeader) (*dto.ItemResponse, error) {
 	item := &models.Barang{}
 
 	if err := s.DB.First(item, "id = ?", id).Error; err != nil {
@@ -126,7 +129,6 @@ func (s *ItemService) Update(id string, req *dto.ItemRequest, file *multipart.Fi
 
 	item.Nama = req.Nama
 	item.Harga = req.Harga
-	item.Stok = req.Stok
 	item.StokMinimum = req.StokMinimum
 
 	
@@ -181,6 +183,7 @@ func (s *ItemService) Update(id string, req *dto.ItemRequest, file *multipart.Fi
 			Nama: item.Kategori.Nama,
 		},
 		Stok:        item.Stok,
+		StokInitial: item.StokInitial,
 		StokMinimum: item.StokMinimum,
 		Gambar:      item.Gambar,
 	}
@@ -214,6 +217,7 @@ func (s *ItemService) Delete(id string) (*dto.ItemResponse, error) {
 			Nama: item.Kategori.Nama,
 		},
 		Stok:        item.Stok,
+		StokInitial: item.StokInitial,
 		StokMinimum: item.StokMinimum,
 		Gambar:      item.Gambar,
 	}

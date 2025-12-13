@@ -53,7 +53,7 @@ func (c *ItemController) GetAll(ctx *gin.Context) {
 
 func (c *ItemController) Update(ctx *gin.Context) {
 	id := ctx.Param("id")
-	req := &dto.ItemRequest{}
+	req := &dto.ItemUpdateRequest{}
 
 	if err := ctx.ShouldBind(req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "format data tidak valid", "details": err.Error()})

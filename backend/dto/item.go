@@ -9,11 +9,19 @@ type ItemRequest struct {
 	KategoriID string `form:"kategoriID" binding:"required,uuid"`
 	Nama string `form:"nama" binding:"required"`
 	Harga float64 `form:"harga" binding:"required,gt=0"`
-	Stok int `form:"stok" binding:"gte=0"`
+	StokInitial int `form:"stokInitial" binding:"gte=0"`
 	StokMinimum int `form:"stokMinimum" binding:"gte=0"`
 	Gambar *multipart.FileHeader `form:"gambar"`
 }
 
+
+type ItemUpdateRequest struct {
+	KategoriID string `form:"kategoriID" binding:"required,uuid"`
+	Nama string `form:"nama" binding:"required"`
+	Harga float64 `form:"harga" binding:"required,gt=0"`
+	StokMinimum int `form:"stokMinimum" binding:"gte=0"`
+	Gambar *multipart.FileHeader `form:"gambar"`
+}
 
 type ItemResponse struct {
 	ID uuid.UUID `json:"id"`
@@ -21,6 +29,7 @@ type ItemResponse struct {
 	Harga float64 `json:"harga"`
 	Kategori CategoryResponse `json:"kategori"`
 	Stok int `json:"stok"`
+	StokInitial int `json:"stokInitial"`
 	StokMinimum int `json:"stokMinimum"`
 	Gambar string `json:"gambar"`
 }

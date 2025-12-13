@@ -46,7 +46,7 @@ func (s *TransactionService) Create(req *dto.TransactionRequest) (*dto.Transacti
 	if req.Tanggal == "" {
 		tgl = time.Now()
 	} else {
-		parsedTime, err := time.Parse("2006-01-02 15:04:05", req.Tanggal)
+		parsedTime, err := time.Parse("2006-01-02T15:04:05.000Z", req.Tanggal)
 		if err != nil {
 			return nil, err
 		}
@@ -294,7 +294,7 @@ func (s *TransactionService) Update(id string, req *dto.TransactionUpdateRequest
 		if req.Tanggal == "" {
 			tgl = existing.Tanggal
 		} else {
-			parsedTime, err := time.Parse("2006-01-02 15:04:05", req.Tanggal)
+			parsedTime, err := time.Parse("2006-01-02T15:04:05.000Z", req.Tanggal)
 			if err != nil {
 				return err
 			}

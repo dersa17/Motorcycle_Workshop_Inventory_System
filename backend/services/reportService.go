@@ -45,7 +45,7 @@ func (s *ReportService) GetPurchaseReport(req *dto.ReportFilter) ([]dto.ReportPu
 	return report, nil
 }
 
-func (s *ReportService) GetSalesReport(req *dto.ReportRequest) ([]dto.ReportSalesResponse, error) {
+func (s *ReportService) GetSalesReport(req *dto.ReportFilter) ([]dto.ReportSalesResponse, error) {
 	report := []dto.ReportSalesResponse{}
 
 	err := s.DB.Raw(`
@@ -72,7 +72,7 @@ func (s *ReportService) GetSalesReport(req *dto.ReportRequest) ([]dto.ReportSale
 }
 
 func (s *ReportService) GetInventoryReport(
-	req *dto.ReportRequest,
+	req *dto.ReportFilter,
 ) ([]dto.ReportInventoryResponse, error) {
 
 	// struct internal untuk hasil raw SQL
@@ -150,7 +150,7 @@ func (s *ReportService) GetInventoryReport(
 }
 
 func (s *ReportService) GetProfitLossReport(
-	req *dto.ReportRequest,
+	req *dto.ReportFilter,
 ) (*dto.ReportProfitLossResponse, error) {
 
 	var temp struct {

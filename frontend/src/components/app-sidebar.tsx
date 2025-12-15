@@ -22,7 +22,7 @@ const menuItems = [
   { title: "Pembelian", url: "/pembelian", icon: DollarSign },
   { title: "Penjualan", url: "/penjualan", icon: DollarSign },
   {title: "Riwayat Transaksi", url: "/riwayat-transaksi", icon: History},
-  { title: "Laporan", url: "/reports", icon: FileText },
+  { title: "Laporan", url: "/laporan", icon: FileText },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 

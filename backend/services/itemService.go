@@ -69,6 +69,14 @@ func (s *ItemService) Create(req *dto.ItemRequest, file *multipart.FileHeader) (
 		return nil, helpers.ParseDBError(err)
 	}
 
+	riwayat := &models.RiwayatAktivitas{
+		Nama:      "Membuat data barang",
+		Deskripsi: "barang baru berhasil dibuat dengan nama: " + item.Nama,
+		Tanggal:   time.Now(),
+	}
+
+	_ = s.DB.Create(&riwayat)
+
 	response := &dto.ItemResponse{
 		ID:    item.ID,
 		Nama:  item.Nama,
@@ -174,6 +182,14 @@ func (s *ItemService) Update(id string, req *dto.ItemUpdateRequest, file *multip
 		return nil, helpers.ParseDBError(err)
 	}
 
+	riwayat := &models.RiwayatAktivitas{
+		Nama:      "Memperbarui data barang",
+		Deskripsi: fmt.Sprintf("Memperbarui data barang '%s'", item.Nama),
+		Tanggal:   time.Now(),
+	}
+
+	_ = s.DB.Create(&riwayat)
+
 	response := &dto.ItemResponse{
 		ID:    item.ID,
 		Nama:  item.Nama,
@@ -207,6 +223,14 @@ func (s *ItemService) Delete(id string) (*dto.ItemResponse, error) {
 	if err := s.DB.Delete(item, "id = ?", id).Error; err != nil {
 		return nil, helpers.ParseDBError(err)
 	}
+
+	riwayat := &models.RiwayatAktivitas{
+		Nama:      "Menghapus data barang",
+		Deskripsi: fmt.Sprintf("Menghapus barang '%s'", item.Nama),
+		Tanggal:   time.Now(),
+	}
+
+	_ = s.DB.Create(&riwayat)
 
 	response := &dto.ItemResponse{
 		ID:    item.ID,

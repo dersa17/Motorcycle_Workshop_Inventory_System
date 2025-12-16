@@ -6,6 +6,8 @@ import (
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/helpers"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/models"
 	"gorm.io/gorm"
+	"time"
+	"fmt"
 )
 
 
@@ -23,6 +25,15 @@ func (s *SupplierService) Create(req *dto.SupplierRequest) (*dto.SupplierRespons
 	if err := s.DB.Create(supplier).Error; err != nil {
 		return  nil, helpers.ParseDBError(err)
 	}
+
+	
+	riwayat := &models.RiwayatAktivitas{
+		Nama:      "Membuat data supplier",
+		Deskripsi: fmt.Sprintf("Supplier baru berhasil dibuat dengan nama: %s", supplier.Nama),
+		Tanggal:   time.Now(),
+	}
+
+	_ = s.DB.Create(&riwayat)
 
 	response := &dto.SupplierResponse{
 		ID: supplier.ID,
@@ -75,6 +86,14 @@ func (s* SupplierService) Update(id string, req *dto.SupplierRequest) (*dto.Supp
 		return nil, helpers.ParseDBError(err)
 	}
 
+	riwayat := &models.RiwayatAktivitas{
+		Nama:      "Memperbarui data supplier",
+		Deskripsi: fmt.Sprintf("Memperbarui data supplier '%s'", supplier.Nama),
+		Tanggal:   time.Now(),
+	}
+
+	_ = s.DB.Create(&riwayat)
+
 	response := &dto.SupplierResponse{
 		ID:   supplier.ID,
 		Nama: supplier.Nama,
@@ -95,6 +114,14 @@ func (s* SupplierService) Delete(id string) (*dto.SupplierResponse, error) {
 	if err:= s.DB.Delete(supplier, "id = ?", id).Error; err != nil {
 		return  nil, helpers.ParseDBError(err)
 	}
+
+	riwayat := &models.RiwayatAktivitas{
+		Nama:      "Menghapus data supplier",
+		Deskripsi: fmt.Sprintf("Menghapus supplier '%s'", supplier.Nama),
+		Tanggal:   time.Now(),
+	}
+
+	_ = s.DB.Create(&riwayat)
 
 	response := &dto.SupplierResponse{
 		ID: supplier.ID,

@@ -1,6 +1,8 @@
 package services
 
 import (
+	"time"
+	"fmt"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/dto"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/helpers"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/models"
@@ -21,6 +23,14 @@ func (s *CategoryService) Create(req *dto.CategoryRequest) (*dto.CategoryRespons
 	if err := s.DB.Create(&category).Error; err != nil {
 		return nil, helpers.ParseDBError(err)
 	}
+
+	riwayat := &models.RiwayatAktivitas{
+		Nama:      "Membuat data kategori",
+		Deskripsi: "Kategori baru berhasil dibuat dengan nama: " + category.Nama,
+		Tanggal:   time.Now(),
+	}
+
+	_ = s.DB.Create(&riwayat)
 
 	response := &dto.CategoryResponse{
 		ID:   category.ID,
@@ -95,11 +105,24 @@ func (s *CategoryService) Update(id string, req *dto.CategoryRequest) (*dto.Cate
 		return nil, helpers.ParseDBError(err)
 	}
 
+	oldNama := category.Nama
 	category.Nama = req.Nama
 
 	if err := s.DB.Save(&category).Error; err != nil {
 		return nil, helpers.ParseDBError(err)
 	}
+
+	riwayat := &models.RiwayatAktivitas{
+		Nama:      "Memperbarui data kategori",
+		Deskripsi: fmt.Sprintf(
+		"Memperbarui kategori dari '%s' menjadi '%s'",
+		oldNama,
+		category.Nama,
+	),
+	Tanggal: time.Now(),
+	}
+
+	_ = s.DB.Create(&riwayat)
 
 	response := &dto.CategoryResponse{
 		ID:   category.ID,
@@ -115,10 +138,19 @@ func (s *CategoryService) Delete(id string) (*dto.CategoryResponse, error) {
         return nil, helpers.ParseDBError(err)
     }
 
+	namaKategori := category.Nama
+
 	if err := s.DB.Delete(&category, "id = ?", id).Error; err != nil {
 		return nil, helpers.ParseDBError(err)
 	}
+	
+	riwayat := &models.RiwayatAktivitas{
+		Nama:      "Menghapus data kategori",
+		Deskripsi: fmt.Sprintf("Menghapus kategori '%s'", namaKategori),
+		Tanggal:   time.Now(),
+	}
 
+	_ = s.DB.Create(&riwayat)
 	var da *string
 
 	if category.DeletedAt.Valid {

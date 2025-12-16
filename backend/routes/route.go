@@ -21,6 +21,8 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	transactionController := controllers.NewTransactionController(transactionService)	
 	reportService := services.NewReportService(db)
 	reportController := controllers.NewReportController(reportService)
+	dashboardService := services.NewDashboardService(db)
+	dashboardController := controllers.NewDashboardController((dashboardService))
 
 
 	api := router.Group("/api")
@@ -79,6 +81,12 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 			report.GET("/sales", reportController.GetSalesReport)
 			report.GET("/items", reportController.GetItemsReport)
 			report.GET("/profit-loss", reportController.GetProfitLossReport)
+		}
+		
+		dashboard := api.Group("/dashboard")
+		{
+			dashboard.Use(middlewares.AuthMiddleware())
+			dashboard.GET("", dashboardController.GetDataDashboard)
 		}
 	}
 }

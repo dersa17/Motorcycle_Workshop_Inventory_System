@@ -1,119 +1,193 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, Wrench, TrendingUp, AlertCircle } from "lucide-react";
+"use client";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useDashboard } from "@/hooks/use-dashboard";
+import {
+  Package,
+  ArrowLeftRight,
+  Truck,
+  FolderTree,
+  LoaderCircle,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { id } from "date-fns/locale";
+
+type Stat = {
+  title: string;
+  value: number;
+  icon: LucideIcon;
+  description: string;
+};
+
+type RiwayatAktivitas = {
+  nama: string;
+  deskripsi: string;
+  tanggal: string;
+};
+
+type StokBarangMenipis = {
+  nama: string;
+  harga: number;
+  stok: number;
+  StokInitial: number;
+  StokMinimum: number;
+  Gambar: string;
+};
 
 const Page = () => {
-  const stats = [
+  const { data, isPending } = useDashboard();
+  console.log(data?.RiwayatAktivitas);
+  const stats: Stat[] = [
     {
-      title: "Total Parts",
-      value: "1,247",
-      change: "+12.5%",
+      title: "Total Barang",
+      value: data?.jumlahBarang ?? 0,
       icon: Package,
-      description: "Parts in inventory",
+      description: "Barang di inventaris",
     },
     {
-      title: "Active Services",
-      value: "23",
-      change: "+4.2%",
-      icon: Wrench,
-      description: "Services in progress",
+      title: "Total Transaksi",
+      value: data?.jumlahTransaksi ?? 0,
+      icon: ArrowLeftRight,
+      description: "Transaksi di inventaris",
     },
     {
-      title: "Monthly Revenue",
-      value: "$45,231",
-      change: "+18.7%",
-      icon: TrendingUp,
-      description: "This month's earnings",
+      title: "Total Supplier",
+      value: data?.jumlahSupplier ?? 0,
+      icon: Truck,
+      description: "Supplier di inventaris",
     },
     {
-      title: "Low Stock Items",
-      value: "8",
-      change: "-2 from last week",
-      icon: AlertCircle,
-      description: "Items need reorder",
+      title: "Total Kategori",
+      value: data?.jumlahKategori ?? 0,
+      icon: FolderTree,
+      description: "Kategori di inventaris",
     },
-  ];
-
-  const recentActivities = [
-    { id: 1, action: "New part added", item: "Brake Pads - Honda", time: "2 hours ago" },
-    { id: 2, action: "Service completed", item: "Oil Change - Yamaha R15", time: "3 hours ago" },
-    { id: 3, action: "Inventory updated", item: "Chain Sprocket Kit", time: "5 hours ago" },
-    { id: 4, action: "New order received", item: "Air Filter - Suzuki", time: "1 day ago" },
   ];
 
   return (
     <>
-        {/* Header */}
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-gradient">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back! Here your workshop overview.</p>
-        </div>
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-4xl font-bold text-gradient">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Selamat datang di sini. Berikut ringkasan inventaris bengkel Anda.
+        </p>
+      </div>
 
-        {/* Stats Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <Card key={stat.title} className="card-glow hover:glow-border transition-all">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <stat.icon className="h-5 w-5 text-primary" />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+
+          return (
+            <Card
+              key={stat.title}
+              className="card-glow hover:glow-border transition-all"
+            >
+              <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                <CardTitle className="text-sm font-medium">
+                  {stat.title}
+                </CardTitle>
+                <Icon className="h-5 w-5 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
-                <p className="text-sm text-primary font-medium mt-2">{stat.change}</p>
+                {isPending ? (
+                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                ) : (
+                  <div className="text-3xl font-bold">{stat.value}</div>
+                )}
+
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stat.description}
+                </p>
               </CardContent>
             </Card>
-          ))}
+          );
+        })}
+      </div>
+
+      {/* Recent Activities */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="card-glow">
+          <CardHeader>
+            <CardTitle>Riwayat Aktivitas</CardTitle>
+            <CardDescription>
+              Informasi terbaru dari bengkel Anda
+            </CardDescription>
+          </CardHeader>
+
+         <CardContent>
+  <div className="space-y-4 max-h-80 overflow-y-auto">
+    {isPending ? (
+      <div className="flex justify-center py-4">
+        <LoaderCircle className="h-6 w-6 animate-spin" />
+      </div>
+    ) : data?.RiwayatAktivitas && data.RiwayatAktivitas.length > 0 ? (
+      data.RiwayatAktivitas.map((activity: RiwayatAktivitas, index: number) => (
+        <div key={index} className="flex items-start space-x-4 p-2 rounded-lg hover:bg-muted/50 transition-colors">
+          <div className="w-2 h-2 rounded-full bg-primary mt-2" />
+          <div className="flex-1 space-y-1">
+            <p className="text-sm font-medium">{activity.nama}</p>
+            <p className="text-xs text-muted-foreground">{activity.deskripsi}</p>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            {formatDistanceToNow(new Date(activity.tanggal), { addSuffix: true, locale: id })}
+          </span>
         </div>
+      ))
+    ) : (
+      <p className="text-sm text-muted-foreground text-center">
+        Belum ada aktivitas terbaru
+      </p>
+    )}
+  </div>
+</CardContent>
+        </Card>
 
-        {/* Recent Activities */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="card-glow">
-            <CardHeader>
-              <CardTitle>Recent Activities</CardTitle>
-              <CardDescription>Latest updates from your workshop</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentActivities.map((activity) => (
-                  <div key={activity.id} className="flex items-start space-x-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-2" />
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium">{activity.action}</p>
-                      <p className="text-sm text-muted-foreground">{activity.item}</p>
-                    </div>
-                    <span className="text-xs text-muted-foreground">{activity.time}</span>
-                  </div>
-                ))}
+        {/* Quick Actions */}
+        <Card className="card-glow">
+          <CardHeader>
+            <CardTitle>Pemberitahuan Stok</CardTitle>
+            <CardDescription>
+              Informasi stok barang yang perlu diperhatikan
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 max-h-80 overflow-y-auto">
+            {isPending ? (
+              <div className="flex justify-center py-4">
+                <LoaderCircle className="h-6 w-6 animate-spin" />
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card className="card-glow">
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>Common tasks and shortcuts</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { label: "Add Part", icon: Package },
-                  { label: "New Service", icon: Wrench },
-                  { label: "View Reports", icon: TrendingUp },
-                  { label: "Check Alerts", icon: AlertCircle },
-                ].map((action) => (
-                  <button
-                    key={action.label}
-                    className="flex flex-col items-center justify-center p-6 rounded-lg bg-card hover:bg-muted/50 border border-border hover:border-primary/50 transition-all group"
+            ) : data?.stokBarangMenipisList &&
+              data.stokBarangMenipisList.length > 0 ? (
+              data.stokBarangMenipisList.map(
+                (item: StokBarangMenipis, index: number) => (
+                  <div
+                    key={index}
+                    className="flex items-start space-x-2 p-2 rounded-lg hover:bg-muted/50"
                   >
-                    <action.icon className="h-8 w-8 text-primary mb-2 group-hover:scale-110 transition-transform" />
-                    <span className="text-sm font-medium">{action.label}</span>
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                    <div className="w-2 h-2 rounded-full bg-red-500 mt-2" />
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium">{item.nama}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Stok tersisa: {item.stok}
+                      </p>
+                    </div>
+                  </div>
+                )
+              )
+            ) : (
+              <p className="text-sm text-muted-foreground text-center">
+                Semua stok aman
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </>
   );
 };

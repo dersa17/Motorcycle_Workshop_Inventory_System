@@ -19,3 +19,10 @@ type LoginResponse struct {
 	User  UserResponse `json:"user"`
 	Token string       `json:"token"`
 }
+
+type UserUpdateRequest struct {
+	Username *string  `json:"username"`
+	Email *string `json:"email"`
+	NewPassword *string `json:"newPassword"`
+	ConfirmPassword *string `json:"confirmPassword"`
+}

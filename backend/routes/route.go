@@ -36,6 +36,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 			auth.GET("/me", middlewares.AuthMiddleware(), authController.Me)
 			auth.POST("/logout", middlewares.AuthMiddleware(), authController.Logout)
 			auth.POST("/login", authController.Login)
+			auth.POST("/update-profile", middlewares.AuthMiddleware(), authController.UpdateProfile)
 		}
 		category  := api.Group("/categories") 
 		{

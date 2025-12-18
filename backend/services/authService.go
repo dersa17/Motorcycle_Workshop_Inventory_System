@@ -82,3 +82,54 @@ func (s *AuthService) Me(tokenUser *dto.UserResponse) (*dto.UserResponse, error)
 
 	return response, nil
 }
+
+func (s *AuthService) UpdateProfile(
+	tokenUser *dto.UserResponse,
+	req *dto.UserUpdateRequest,
+) (*dto.UserResponse, error) {
+
+	user := &models.User{}
+
+	if err := s.DB.Where("id = ?", tokenUser.ID).First(user).Error; err != nil {
+		return nil, errors.New("user tidak ditemukan")
+	}
+
+	// update username
+	if req.Username != nil {
+		user.Username = *req.Username
+	}
+
+	// update email
+	if req.Email != nil {
+		user.Email = *req.Email
+	}
+
+	// update password (hanya jika dikirim)
+	if req.NewPassword != nil || req.ConfirmPassword != nil {
+		if req.NewPassword == nil || req.ConfirmPassword == nil {
+			return nil, errors.New("password dan konfirmasi wajib diisi")
+		}
+
+		if *req.NewPassword != *req.ConfirmPassword {
+			return nil, errors.New("password confirmation tidak sesuai")
+		}
+
+		hashed, err := bcrypt.GenerateFromPassword([]byte(*req.NewPassword), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, errors.New("gagal hash password")
+		}
+
+		user.Password = string(hashed)
+	}
+
+	// simpan ke database
+	if err := s.DB.Save(user).Error; err != nil {
+		return nil, err
+	}
+
+	return &dto.UserResponse{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+	}, nil
+}

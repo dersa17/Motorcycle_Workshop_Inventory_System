@@ -81,3 +81,40 @@ func (c *AuthController) Me(ctx *gin.Context) {
 		"data":    res,
 	})
 }
+
+
+func (c *AuthController) UpdateProfile(ctx *gin.Context) {
+	request := &dto.UserUpdateRequest{}
+
+	if err := ctx.ShouldBindJSON(request); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	userAny, ok := ctx.Get("currentUser")
+	if !ok {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "user tidak ditemukan"})
+			return
+	}
+
+	currentUser, ok := userAny.(*dto.UserResponse)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "format user tidak valid"})
+		return
+	}
+
+	res, err := c.Service.UpdateProfile(currentUser, request)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "berhasil memperbarui profile",
+		"data":    res,
+	})
+}

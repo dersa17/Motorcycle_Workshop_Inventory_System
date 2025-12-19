@@ -1,5 +1,5 @@
 import axios from "@/lib/axios"
-import { loginSchema } from "@/schemas/auth-schema";
+import { loginSchema, updateProfileSchema } from "@/schemas/auth-schema";
 import { z } from "zod";
 
 export const me = async () => {
@@ -17,3 +17,7 @@ export const logout = async () => {
   return res.data;
 };
 
+export const updateProfile = async (data: z.infer<typeof updateProfileSchema>) => {
+  const res = await axios.post("/auth/update-profile", data)
+  return res.data
+}

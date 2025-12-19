@@ -23,7 +23,7 @@ const menuItems = [
   { title: "Penjualan", url: "/penjualan", icon: DollarSign },
   {title: "Riwayat Transaksi", url: "/riwayat-transaksi", icon: History},
   { title: "Laporan", url: "/laporan", icon: FileText },
-  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Pengaturan", url: "/pengaturan", icon: Settings },
 ];
 
 export function AppSidebar() {

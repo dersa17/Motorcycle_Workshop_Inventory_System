@@ -32,3 +32,14 @@ export const useLogout = () => {
     },
   });
 };
+
+
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: authService.updateProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["me"]})
+    }
+  })
+}

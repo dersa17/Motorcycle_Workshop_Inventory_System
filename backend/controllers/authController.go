@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"net/http"
-
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/dto"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/services"
+	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/config"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,8 +37,10 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		})
 		return
 	}
+
+	cfg := config.LoadConfig()
 	ctx.SetSameSite(http.SameSiteLaxMode)
-	ctx.SetCookie("token", res.Token, 3600*24, "/", "", false, true)
+	ctx.SetCookie("token", res.Token, 3600*24, "/", "", cfg.APP_ENV == "production", true)
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "login berhasil",
 		"data":    res,

@@ -2,10 +2,10 @@ package services
 
 import (
 	"errors"
-	"os"
 	"time"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/dto"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/models"
+	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/config"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -54,7 +54,7 @@ func (s *AuthService) Login(req *dto.LoginRequest) (*dto.LoginResponse, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	tokenString, err := token.SignedString([]byte( os.Getenv("JWT_SECRET_KEY")))
+	tokenString, err := token.SignedString([]byte( config.LoadConfig().JWT_SECRET_KEY))
 	if err != nil {
 		return nil, errors.New("gagal membuat token JWT")
 	}

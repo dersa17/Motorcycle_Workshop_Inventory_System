@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/dto"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/helpers"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/models"
@@ -9,7 +10,6 @@ import (
 	"gorm.io/gorm"
 	"strconv"
 	"time"
-	"fmt"
 )
 
 type TransactionService struct {
@@ -119,23 +119,20 @@ func (s *TransactionService) Create(req *dto.TransactionRequest) (*dto.Transacti
 		return nil, err
 	}
 
-	
 	// Ambil ulang transaksi lengkap
 	var created models.Transaksi
 	if err := s.DB.Preload("DetailTransaksi").
-	Preload("DetailTransaksi.Barang").
-	Preload("Supplier").
-	First(&created, "id = ?", transaction.ID).Error; err != nil {
-		
-		return nil, helpers.ParseDBError(err)
-	}
-	riwayat := &models.RiwayatAktivitas{
-		Nama:      fmt.Sprintf("Membuat data transaksi %s", created.Jenis ),
-		Deskripsi: fmt.Sprintf("Transaksi baru berhasil dibuat dengan ID: %s", created.ID),
-		Tanggal:   time.Now(),
-	}
+		Preload("DetailTransaksi.Barang").
+		Preload("Supplier").
+		First(&created, "id = ?", transaction.ID).Error; err != nil {
 
-	_ = s.DB.Create(&riwayat)
+		return nil, helpers.ParseDBError(err)
+	}	
+	helpers.LogRiwayatAsync(
+		s.DB,
+		fmt.Sprintf("Membuat data transaksi %s", created.Jenis),
+		fmt.Sprintf("Transaksi baru berhasil dibuat dengan ID: %s", created.ID),
+	)
 
 	// Buat response DTO
 	response := &dto.TransactionResponse{

@@ -69,13 +69,11 @@ func (s *ItemService) Create(req *dto.ItemRequest, file *multipart.FileHeader) (
 		return nil, helpers.ParseDBError(err)
 	}
 
-	riwayat := &models.RiwayatAktivitas{
-		Nama:      "Membuat data barang",
-		Deskripsi: "barang baru berhasil dibuat dengan nama: " + item.Nama,
-		Tanggal:   time.Now(),
-	}
-
-	_ = s.DB.Create(&riwayat)
+	helpers.LogRiwayatAsync(
+		s.DB,
+		"Membuat data barang",
+		"Barang baru berhasil dibuat dengan nama: "+item.Nama,
+	)
 
 	response := &dto.ItemResponse{
 		ID:    item.ID,
@@ -139,8 +137,6 @@ func (s *ItemService) Update(id string, req *dto.ItemUpdateRequest, file *multip
 	item.Harga = req.Harga
 	item.StokMinimum = req.StokMinimum
 
-	
-
 	if file != nil {
 
 		err := os.MkdirAll("uploads", os.ModePerm)
@@ -149,9 +145,9 @@ func (s *ItemService) Update(id string, req *dto.ItemUpdateRequest, file *multip
 		}
 
 		if item.Gambar != "" {
-		if err := os.Remove(item.Gambar); err != nil && !os.IsNotExist(err) {
-			fmt.Println("gagal menghapus file:", err)
-		}
+			if err := os.Remove(item.Gambar); err != nil && !os.IsNotExist(err) {
+				fmt.Println("gagal menghapus file:", err)
+			}
 		}
 
 		path := fmt.Sprintf("uploads/%d_%s%s", time.Now().Unix(), uuid.New().String(), filepath.Ext(file.Filename))
@@ -182,13 +178,11 @@ func (s *ItemService) Update(id string, req *dto.ItemUpdateRequest, file *multip
 		return nil, helpers.ParseDBError(err)
 	}
 
-	riwayat := &models.RiwayatAktivitas{
-		Nama:      "Memperbarui data barang",
-		Deskripsi: fmt.Sprintf("Memperbarui data barang '%s'", item.Nama),
-		Tanggal:   time.Now(),
-	}
-
-	_ = s.DB.Create(&riwayat)
+	helpers.LogRiwayatAsync(
+		s.DB,
+		"Memperbarui data barang",
+		fmt.Sprintf("Memperbarui data barang '%s'", item.Nama),
+	)
 
 	response := &dto.ItemResponse{
 		ID:    item.ID,
@@ -224,13 +218,11 @@ func (s *ItemService) Delete(id string) (*dto.ItemResponse, error) {
 		return nil, helpers.ParseDBError(err)
 	}
 
-	riwayat := &models.RiwayatAktivitas{
-		Nama:      "Menghapus data barang",
-		Deskripsi: fmt.Sprintf("Menghapus barang '%s'", item.Nama),
-		Tanggal:   time.Now(),
-	}
-
-	_ = s.DB.Create(&riwayat)
+	helpers.LogRiwayatAsync(
+		s.DB,
+		"Menghapus data barang",
+		fmt.Sprintf("Menghapus barang '%s'", item.Nama),
+	)
 
 	response := &dto.ItemResponse{
 		ID:    item.ID,

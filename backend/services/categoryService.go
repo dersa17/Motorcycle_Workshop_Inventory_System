@@ -1,7 +1,6 @@
 package services
 
 import (
-	"time"
 	"fmt"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/dto"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/helpers"
@@ -24,13 +23,7 @@ func (s *CategoryService) Create(req *dto.CategoryRequest) (*dto.CategoryRespons
 		return nil, helpers.ParseDBError(err)
 	}
 
-	riwayat := &models.RiwayatAktivitas{
-		Nama:      "Membuat data kategori",
-		Deskripsi: "Kategori baru berhasil dibuat dengan nama: " + category.Nama,
-		Tanggal:   time.Now(),
-	}
-
-	_ = s.DB.Create(&riwayat)
+	helpers.LogRiwayatAsync(s.DB, "Membuat data kategori", "Kategori baru berhasil dibuat dengan nama: "+category.Nama)
 
 	response := &dto.CategoryResponse{
 		ID:   category.ID,
@@ -112,17 +105,10 @@ func (s *CategoryService) Update(id string, req *dto.CategoryRequest) (*dto.Cate
 		return nil, helpers.ParseDBError(err)
 	}
 
-	riwayat := &models.RiwayatAktivitas{
-		Nama:      "Memperbarui data kategori",
-		Deskripsi: fmt.Sprintf(
+	helpers.LogRiwayatAsync(s.DB, "Memperbarui data kategori", fmt.Sprintf(
 		"Memperbarui kategori dari '%s' menjadi '%s'",
 		oldNama,
-		category.Nama,
-	),
-	Tanggal: time.Now(),
-	}
-
-	_ = s.DB.Create(&riwayat)
+		category.Nama))
 
 	response := &dto.CategoryResponse{
 		ID:   category.ID,
@@ -134,23 +120,18 @@ func (s *CategoryService) Update(id string, req *dto.CategoryRequest) (*dto.Cate
 func (s *CategoryService) Delete(id string) (*dto.CategoryResponse, error) {
 	category := &models.Kategori{}
 
-    if err := s.DB.First(category, "id = ?", id).Error; err != nil {
-        return nil, helpers.ParseDBError(err)
-    }
+	if err := s.DB.First(category, "id = ?", id).Error; err != nil {
+		return nil, helpers.ParseDBError(err)
+	}
 
 	namaKategori := category.Nama
 
 	if err := s.DB.Delete(&category, "id = ?", id).Error; err != nil {
 		return nil, helpers.ParseDBError(err)
 	}
-	
-	riwayat := &models.RiwayatAktivitas{
-		Nama:      "Menghapus data kategori",
-		Deskripsi: fmt.Sprintf("Menghapus kategori '%s'", namaKategori),
-		Tanggal:   time.Now(),
-	}
 
-	_ = s.DB.Create(&riwayat)
+	helpers.LogRiwayatAsync(s.DB, "Menghapus data kategori", fmt.Sprintf("Menghapus kategori '%s'", namaKategori))
+
 	var da *string
 
 	if category.DeletedAt.Valid {
@@ -161,8 +142,8 @@ func (s *CategoryService) Delete(id string) (*dto.CategoryResponse, error) {
 	}
 
 	response := &dto.CategoryResponse{
-		ID:   category.ID,
-		Nama: category.Nama,
+		ID:        category.ID,
+		Nama:      category.Nama,
 		DeletedAt: da,
 	}
 	return response, nil
@@ -180,8 +161,8 @@ func (s *CategoryService) Restore(id string) (*dto.CategoryResponse, error) {
 	}
 
 	response := &dto.CategoryResponse{
-		ID:   category.ID,
-		Nama: category.Nama,
+		ID:        category.ID,
+		Nama:      category.Nama,
 		DeletedAt: nil,
 	}
 	return response, nil

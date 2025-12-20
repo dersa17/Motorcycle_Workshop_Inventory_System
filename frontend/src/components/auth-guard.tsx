@@ -20,12 +20,14 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     }
   }, [data, isPending, router]);
 
-  if (isPending || !data )
+  if (isPending)
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="w-12 h-12 text-primary animate-spin" />
       </div>
     );
+
+  if (!data) return null;
 
   return <>{children}</>;
 }

@@ -7,6 +7,7 @@ export const useMe = () => {
     queryFn: authService.me,
     staleTime: 1000 * 60 * 30,
     refetchOnWindowFocus: false,
+    retry: false,
   });
 };
 

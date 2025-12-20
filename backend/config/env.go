@@ -23,7 +23,7 @@ func LoadConfig() *Config {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Println("Info: .env file not found, using system environment variables")
 	}
 
 	cfg = &Config{

@@ -39,7 +39,7 @@ func (c *AuthController) Login(ctx *gin.Context) {
 	}
 
 	cfg := config.LoadConfig()
-	ctx.SetSameSite(http.SameSiteLaxMode)
+	ctx.SetSameSite(http.SameSiteNoneMode)
 	ctx.SetCookie("token", res.Token, 3600*24, "/", "", cfg.APP_ENV == "production", true)
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "login berhasil",

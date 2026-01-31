@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/dto"
+	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/helpers"
 	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/services"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type TransactionController struct {
@@ -35,6 +37,7 @@ func (c *TransactionController) Create(ctx *gin.Context) {
 
 	res, err := c.TransactionService.Create(req)
 	if err != nil {
+		helpers.Log.WithField("error", err.Error()).Error("Failed to create transaction")
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -47,6 +50,7 @@ func (c *TransactionController) Create(ctx *gin.Context) {
 func (c *TransactionController) GetAll(ctx *gin.Context) {
 	res, err := c.TransactionService.GetAll()
 	if err != nil {
+		helpers.Log.WithField("error", err.Error()).Error("Failed to fetch transactions")
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -64,9 +68,14 @@ func (c *TransactionController) Update(ctx *gin.Context) {
 	}
 	res, err := c.TransactionService.Update(id, req)
 	if err != nil {
+		helpers.Log.WithFields(map[string]interface{}{
+			"id":    id,
+			"error": err.Error(),
+		}).Error("Failed to update transaction")
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "transaksi berhasil diperbarui",
 		"data":    res,

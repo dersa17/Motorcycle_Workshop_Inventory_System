@@ -2,8 +2,9 @@ package middlewares
 
 import (
 	"net/http"
-	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/services"  
-	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/config"  
+
+	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/config"
+	"github.com/dersa17/Motorcycle_Workshop_Inventory_System/backend/services"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -28,8 +29,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		c.Set("currentUser", &claims.User)
-		
+
 		c.Next()
 	}
 }
-
